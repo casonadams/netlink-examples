@@ -1,0 +1,12 @@
+*.over
+*.symvers
+*.ko
+*.o
+*.cmd
+modules.order
+netlinkKernel.mod.c
+.tmp_versions/
+
+netlinkUser
+recv
+send

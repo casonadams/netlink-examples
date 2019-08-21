@@ -26,7 +26,6 @@ int main()
 	bind(sock_fd, (struct sockaddr*)&src_addr, sizeof(src_addr));
 
 	memset(&dest_addr, 0, sizeof(dest_addr));
-	memset(&dest_addr, 0, sizeof(dest_addr));
 	dest_addr.nl_family = AF_NETLINK;
 	dest_addr.nl_pid = 0; /* For Linux Kernel */
 	dest_addr.nl_groups = 0; /* unicast */
@@ -37,7 +36,7 @@ int main()
 	nlh->nlmsg_pid = getpid();
 	nlh->nlmsg_flags = 0;
 
-	strcpy(NLMSG_DATA(nlh), "Hello");
+	strcpy(NLMSG_DATA(nlh), "Hello World!");
 
 	iov.iov_base = (void *)nlh;
 	iov.iov_len = nlh->nlmsg_len;
@@ -47,7 +46,7 @@ int main()
 	msg.msg_iovlen = 1;
 
 	printf("Sending message to kernel\n");
-	sendmsg(sock_fd,&msg,0);
+	sendmsg(sock_fd, &msg, 0);
 	printf("Waiting for message from kernel\n");
 
 	/* Read message from kernel */
