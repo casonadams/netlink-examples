@@ -38,10 +38,10 @@ int main() {
     nlh = (struct nlmsghdr *)malloc(NLMSG_SPACE(MAX_PAYLOAD));
     memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD));
     nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD);
-    nlh->nlmsg_pid = getpid();
+    nlh->nlmsg_pid = 1000;
     nlh->nlmsg_flags = 0;
 
-    strcpy(NLMSG_DATA(nlh), " --> Space 001 <--");
+    strcpy(NLMSG_DATA(nlh), " --> Space 002 <--");
 
     iov.iov_base = (void *)nlh;
     iov.iov_len = nlh->nlmsg_len;
@@ -54,8 +54,8 @@ int main() {
     sendmsg(fd, &msg, 0);
     printf("Send message %s\n", (char *)NLMSG_DATA(nlh));
     /* Read message from kernel */
-    recvmsg(fd, &msg, 0);
-    printf("Received message payload: %s\n", (char *)NLMSG_DATA(nlh));
+    // recvmsg(fd, &msg, 0);
+    // printf("Received message payload: %s\n", (char *)NLMSG_DATA(nlh));
 
     close(fd);
 }
