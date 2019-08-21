@@ -3,9 +3,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <stdio.h>
-
-#define MAX_PAYLOAD 1024
-#define NETLINK_USER 31
+#include "netlink.h"
 
 struct sockaddr_nl src_addr;
 struct sockaddr_nl dest_addr;
@@ -25,20 +23,20 @@ int main() {
 
     memset(&src_addr, 0, sizeof(src_addr));
     src_addr.nl_family = AF_NETLINK;
-    src_addr.nl_pid = 1000;
+    src_addr.nl_pid = MESSAGE_ID;
     src_addr.nl_groups = 0;
 
     bind(fd, (struct sockaddr *)&src_addr, sizeof(src_addr));
 
     memset(&dest_addr, 0, sizeof(dest_addr));
     dest_addr.nl_family = AF_NETLINK;
-    dest_addr.nl_pid = 0;
+    dest_addr.nl_pid = getpid();
     dest_addr.nl_groups = 0;
 
     nlh = (struct nlmsghdr *)malloc(NLMSG_SPACE(MAX_PAYLOAD));
     memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD));
     nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD);
-    nlh->nlmsg_pid = 1000;
+    nlh->nlmsg_pid = getpid();
     nlh->nlmsg_flags = 0;
 
     iov.iov_base = (void *)nlh;

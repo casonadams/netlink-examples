@@ -6,7 +6,6 @@ all:
 	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
 	gcc send.c -o send
 	gcc recv.c -o recv
-	gcc netlinkUser.c -o netlinkUser
 
 clean:
 	rm -rf *.o *.ko *.mod.* *.cmd .module* modules* Module* .*.cmd .tmp*

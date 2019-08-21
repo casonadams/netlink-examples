@@ -7,6 +7,5 @@ modules.order
 netlinkKernel.mod.c
 .tmp_versions/
 
-netlinkUser
 recv
 send

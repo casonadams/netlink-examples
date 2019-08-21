@@ -3,9 +3,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <stdio.h>
-
-#define MAX_PAYLOAD 1024
-#define NETLINK_USER 31
+#include "netlink.h"
 
 struct sockaddr_nl src_addr;
 struct sockaddr_nl dest_addr;
@@ -38,7 +36,7 @@ int main() {
     nlh = (struct nlmsghdr *)malloc(NLMSG_SPACE(MAX_PAYLOAD));
     memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD));
     nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD);
-    nlh->nlmsg_pid = 1000;
+    nlh->nlmsg_pid = MESSAGE_ID;
     nlh->nlmsg_flags = 0;
 
     strcpy(NLMSG_DATA(nlh), " --> Space 002 <--");
@@ -50,12 +48,8 @@ int main() {
     msg.msg_iov = &iov;
     msg.msg_iovlen = 1;
 
-    //send the message
     sendmsg(fd, &msg, 0);
     printf("Send message %s\n", (char *)NLMSG_DATA(nlh));
-    /* Read message from kernel */
-    // recvmsg(fd, &msg, 0);
-    // printf("Received message payload: %s\n", (char *)NLMSG_DATA(nlh));
 
     close(fd);
 }

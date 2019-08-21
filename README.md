@@ -6,22 +6,20 @@
 make
 ```
 
-## Compile
-
-```bash
-gcc netlinkUser.c -o netlinkUser
-```
-
 ## insmod kernel module
 
 ```bash
 sudo insmod netlinkKernel.ko
 ```
 
-## Run
+## Run in sperate shells
 
 ```bash
-./netlinkUser
+./recv
+```
+
+```bash
+./send
 ```
 
 ## Validation

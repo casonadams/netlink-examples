@@ -2,30 +2,27 @@
 #include <net/sock.h>
 #include <linux/netlink.h>
 #include <linux/skbuff.h>
-
-
-#define NETLINK_USER 31
+#include "netlink.h"
 
 struct sock *nl_sk = NULL;
+struct nlmsghdr *nlh;
+struct sk_buff *skb_out;
 
-static void hello_nl_recv_msg(struct sk_buff *skb) {
-    struct nlmsghdr *nlh;
-    int pid;
-    struct sk_buff *skb_out;
-    int msg_size;
-    char *msg="Hello from kernel";
-    int res;
+char *msg="Hello from kernel";
+int pid;
+int msg_size;
+int res;
 
+static void recv_msg(struct sk_buff *skb) {
     printk(KERN_INFO "Entering: %s\n", __FUNCTION__);
-
-    msg_size=strlen(msg);
-
-    nlh=(struct nlmsghdr*)skb->data;
+    msg_size = strlen(msg);
+    nlh = (struct nlmsghdr*)skb->data;
     printk(KERN_INFO "Netlink received msg payload:%s\n",(char*)nlmsg_data(nlh));
-    pid = nlh->nlmsg_pid; /*pid of sending process */
+
+    pid = nlh->nlmsg_pid;
     printk(KERN_INFO "PID: %i\n", pid);
 
-    skb_out = nlmsg_new(msg_size,0);
+    skb_out = nlmsg_new(msg_size, 0);
 
     if(!skb_out)
     {
@@ -34,20 +31,22 @@ static void hello_nl_recv_msg(struct sk_buff *skb) {
         return;
     }
 
-    nlh=nlmsg_put(skb_out,0,0,NLMSG_DONE,msg_size,0);
-    NETLINK_CB(skb_out).dst_group = 0; /* mcast group */
-    strncpy(nlmsg_data(nlh),msg,msg_size);
+    nlh = nlmsg_put(skb_out, 0, 0, NLMSG_DONE, msg_size, 0);
+    NETLINK_CB(skb_out).dst_group = (1 << 3); /* mcast group */
+    strncpy(nlmsg_data(nlh), msg, msg_size);
 
-    res=nlmsg_unicast(nl_sk,skb_out,pid);
+    res = nlmsg_unicast(nl_sk, skb_out, pid);
 
-    if(res<0)
+    if(res<0) {
         printk(KERN_INFO "Error while sending bak to user\n");
+    }
 }
 
-static int __init hello_init(void) {
+static int __init init(void) {
     printk("Entering: %s\n",__FUNCTION__);
+
     struct netlink_kernel_cfg cfg = {
-        .input = hello_nl_recv_msg,
+        .input = recv_msg,
     };
 
     nl_sk = netlink_kernel_create(&init_net, NETLINK_USER, &cfg);
@@ -60,12 +59,12 @@ static int __init hello_init(void) {
     return 0;
 }
 
-static void __exit hello_exit(void) {
+static void __exit exit(void) {
     printk(KERN_INFO "exiting hello module\n");
     netlink_kernel_release(nl_sk);
 }
 
-module_init(hello_init); module_exit(hello_exit);
+module_init(init); module_exit(exit);
 
 MODULE_LICENSE("GPL");
 
