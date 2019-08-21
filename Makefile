@@ -11,5 +11,4 @@ clean:
 	rm -rf *.o *.ko *.mod.* *.cmd .module* modules* Module* .*.cmd .tmp*
 	rm send
 	rm recv
-	rm netlinkUser
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean

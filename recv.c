@@ -14,7 +14,6 @@ int fd;
 
 int main() {
     fd = socket(PF_NETLINK, SOCK_RAW, NETLINK_USER);
-    printf("Inside recv main\n");
 
     if (fd < 0) {
         printf("Socket creation failed. try again\n");
@@ -46,9 +45,8 @@ int main() {
     msg.msg_iov = &iov;
     msg.msg_iovlen = 1;
 
-    /* Listen forever in a while loop */
+    printf("Waiting for messages from kernel...\n");
     while (1) {
-        //receive the message
         recvmsg(fd, &msg, 0);
         printf("Received message: %s\n", (char *)NLMSG_DATA(nlh));
     }
